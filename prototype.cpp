@@ -242,7 +242,7 @@ void SWITCH(double &amass, int legmax, int imax, double (&c)[12], double (&qoe)[
         }
         for (int i = 0; i < 6; ++i)
             z[i + 6][i] = 1;
-        /// Dangerous Zone ------------------------------
+        /// --------------------------------
         double um, cbmu, r2, rs, c3, c4, ump;
         if (atp2[0] < 0)
             goto LSWITCH_6;
@@ -327,10 +327,8 @@ LSWITCH_12:
             e[6][6] = 0;
             goto LSWITCH_6;
         }
-        
-
      
-        /// Dangerous Zone End --------------------------
+        /// -----------------------------
 LSWITCH_18:
         BVEVAL(xf, qf, z, c, e, dc);
         for (int i = 0; i < 6; ++i)
@@ -759,9 +757,7 @@ void YDDRHS(double (&y)[6][13], double (&ydd)[6][13], double h, double t, int n)
     double rddmb = -beta * bmax / am1;
     for (int j = 7; j < leg + 6; ++j)
         for (int i = 0; i < 3; ++i)
-        {
             ydd[i][j] -= copysign(rddmb, atp2[j - 7]) * u[i];
-        }
     return;
 }
 
