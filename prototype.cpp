@@ -96,8 +96,7 @@ namespace WADJUST
 // Subroutine SOLVE
 void SOLVE(double (&a)[12][13], int legmax);
 
-/// TODO: 错误从dc即开始发生
-/// TODO: dc滚雪球问题
+
 void OUT(double (&x)[6], double (&q)[6], double (&xf)[6], double (&qf)[6], int &legmax, int npath)
 {
     using namespace CCPINJ;
