@@ -30,7 +30,7 @@ namespace CCPINJ
 void OUT(double (&x)[6], double (&q)[6], double (&xf)[6], double (&qf)[6], int &legmax, int npath);
 namespace WOUT
 {
-    double dc1[50][12], drf1[50], dvf1[50], kc1[50], ck1[50];
+    double dc1[50][12], drf1[50], dvf1[50], kc1[50], ck1[50], wtime[50][7];
     int kc = 0;
 }
 
@@ -104,7 +104,7 @@ void OUT(double (&x)[6], double (&q)[6], double (&xf)[6], double (&qf)[6], int &
     using namespace WADJUST;
     using namespace WCOAST;
     using namespace WOUT;
-    double h[3], e1[3], time[50][7], dc1[50][12], drf1[50];
+    double h[3], e1[3], dc1[50][12], drf1[50];
     if (npath < 0)
     {   
         if (leg < 3)
@@ -145,16 +145,16 @@ void OUT(double (&x)[6], double (&q)[6], double (&xf)[6], double (&qf)[6], int &
                 return;
             kc = (kcount - 1) % 50;
             for (int i = 0; i < leg; ++i)
-                time[kc][i] = atp1[i + 1] - atp1[i];
+                wtime[kc][i] = atp1[i + 1] - atp1[i];
             return;
         }
         double dete = 1;
         for (int i = 0; i < leg + 6; ++i)
             dete *= e[i][i];
-        time[kc][6] = burnt;
-        cout << "Total burn time = " << time[kc][6] << "    Arc times: ";
+        wtime[kc][6] = burnt;
+        cout << "Total burn time = " << wtime[kc][6] << "    Arc times: ";
         for (int i = 0; i < leg; ++i)
-            cout << time[kc][i] << "    ";
+            cout << wtime[kc][i] << "    ";
         cout << "\nDC:    " << dc[0] << "    " << dc[1] << "    " << dc[2] << "    " << dc[3] << "    " << dc[4] << "    " << dc[5] << "\n       " << dc[6] << "    " << dc[7] << "    " << dc[8] << "    " << dc[9] << "    " << dc[10] << "    " << dc[11] << endl;
         cout << "Determinant of E = " << dete;
         cout << "\nDiagonal of E:    ";
@@ -190,9 +190,9 @@ void OUT(double (&x)[6], double (&q)[6], double (&xf)[6], double (&qf)[6], int &
         cout << "\n\nSummary Tables:\n" << "Iteration    Total burn time    Length of burn and coast arcs" << endl;
         for (int i = 0; i < kcount; ++i)
         {
-            cout << kc1[i] << "        " << time[i][6] << "        ";
+            cout << kc1[i] << "        " << wtime[i][6] << "        ";
             for (int j = 0; j < leg; ++j)
-                cout << time[i][j] << "    ";
+                cout << wtime[i][j] << "    ";
             cout << endl;
         }
     }
@@ -866,7 +866,7 @@ void ADJUST(double (&qo)[6], double (&e)[12][13], double (&z)[12][12], double &d
     ck = min(min(1.0, a[0]), min(a[1], a[2]));
     for (int i = 1; i < legmax; ++i)
     {
-        a[i + 2] = 0.5 * (atp1[i] - atp1[i - 1]) / fabs(e[i + 6][legmax + 6] - e[i + 5][legmax + 6]);
+        a[i + 2] = 0.5 * (atp1[i + 1] - atp1[i]) / fabs(e[i + 6][legmax + 6] - e[i + 5][legmax + 6]);
         ck = min(ck, a[i + 2]);
     }
     for (int i = 0; i < 6; ++i)
@@ -900,7 +900,7 @@ void SOLVE(double (&a)[12][13], int legmax)
             if (i != n)
             {
                 double q = a[i][n] / a[n][n];
-                for (int k = n + 1; k < legmax + 7; ++k)  /// TODO: Fix progress
+                for (int k = n + 1; k < legmax + 7; ++k)  
                     a[i][k] -= q * a[n][k];
             }
     }
